@@ -1,0 +1,549 @@
+
+	 Three channel mini chiptune music player. Soft channel 1 uses real channels 1&2. Soft channel 2
+	 uses real channels 2,4,& 5. Soft channel 3 uses real channel 6. 
+
+	Channel 1 & 2
+	-------------
+							
+			Byte 1 (Function)
+
+					00 = skip entry (and byte 2)
+					01-47 = note+octave (followed by attribute byte)
+					48-8E = note+octave (short mode, attribute byte. Use all previous settings)
+					
+					ff = note cut
+					fe = fx pause
+					fd = env define 1 (follows with extra bytes)
+					fc = env define 2 (follows with extra bytes)
+					fb = env define 3 (follows with extra bytes)
+					fa = shadow channel 1 waveform 0
+					f9 = shadow channel 1 waveform 1
+					f8 = shadow channel 1 waveform 2
+					f7 = shadow channel 1 waveform 3
+					f6 = shadow channel 2 waveform 0
+					f5 = shadow channel 2 waveform 1
+					f4 = shadow channel 2 waveform 2
+					f3 = shadow channel 2 waveform 3
+					f2 = Arp define 
+					f1 = Single channel echo define
+					f0 = fx resume
+					e0 - ef = chord define 0-15
+					d0-d2 = Rest+repeat <n> times (note continue)
+					d3-d5 = Cut+repeat <n> times (note cut)
+					d6 = Key release
+					d7 = Key hold decay rate
+					d8 = Key hold
+					d9 = Note Attribute mode reset (cleared/off).
+					da-df = ???
+					c0-c7 = set main channel vol (short mode)
+					c8 = define additive synth mode 1
+					c9 = define additive synth mode 2
+					ca = fx resume for shadow channel 1
+					cb = fx resume for shadow channel 2
+					cc = fx pause for shadow channel 2
+					cd = fx pause for shadow channel 2
+					ce = fx delay for shadow channel 2
+					cf = fx delay for shadow channel 2
+					a0 = call label (two bytes for label)
+					a1 = call label + loop x2 (two bytes for label)
+					a2 = call label + loop x3 (two bytes for label)
+					a3 = call label + loop x4 (two bytes for label)
+					a4 = jump label (two bytes for label)
+					a5 = short jump (1 byte for signed offset)
+					a6 = rtc
+					a7 = set whole note length (default is 6)
+					a8 = call entry list 1
+					a9 = call entry list 2
+					aa = call entry list 3
+					ab = call entry list 4
+					ac = call entry list 5
+					ad = call entry list 6
+					ae = call entry list 7
+					af = fx delay
+					b0 = portamento up
+					b1 = portamento down
+					b2 = portamento to note (up)
+					b3 = portamento to note (down)
+					b4 = vibrato define (multiple bytes)
+					b5 = fx cut
+					b6 = prefix
+					b7 = decrement volume by 1 (volume range is 0-15)
+					b8 = increment volume by 1 (volume range is 0-15)
+					b9 = master pan volume set
+					ba = master volume fade up
+					bb = master volume fade down
+					8f = detune main channel
+					90 = detune shadow channel 1
+					91 = detune shadow channel 2
+					92 = set pan volume main channel
+					93 = set pan volume shadow channel 1
+					94 = set pan volume shadow channel 2
+					95 = set env shadow channel 1
+					96 = set env shadow channel 2
+					97 = vibrato main channel 1 ON
+					98 = vibrato main channel 1 OFF
+					99 = vibrato shadow channel 1 ON
+					9a = vibrato shadow channel 1 OFF
+					9b = vibrato shadow channel 2 ON
+					9c = vibrato shadow channel 2 OFF
+					9d = Echo define 1
+					9e = Echo define 2
+					9f = Echo define 3
+					
+					
+			Byte 2 (Attribute) For Note function.
+			
+				D0-1 =	4 waveforms
+				D2-3 =	4 env types (3 defines to choose from. 0=disable envelope)
+				D4-7 =	16 FX functions
+								0 =	reuse previous modes 
+									(modes)
+									1	=	echo mode 1
+									2	=	echo mode 2
+									3 = echo mode 3
+									4 = add synth 1
+									5 = add synth 2
+									6 = key hold**
+									7 = Single channel echo + add synth 1
+									8 = Single channel echo + add synth 2
+									9 = ???
+									A = Single channel echo
+									B = Arp 
+									C = Chord*
+								D = Note delay by 1 ticks
+								E = Note delay by 2 ticks
+								F = off 
+				
+				*  = if Chord mode used, D0-3 are the Chord bank selection. 
+				** = if Key hold mode used, D0-3 are the number of ticks into a note, to hold the volume level.
+				
+				
+				
+			Parameter bytes for modes other than Note function, see function details further down.
+				
+				
+				 
+							
+	Channel 3
+	---------
+	
+			nybble 
+			
+					0 = cut
+					1 = rest (continues play if in progress)
+					2 = sample 1
+					3 = sample 2
+					4 = sample 3
+					5 = sample 1 %66 vol
+					6 = sample 2 %66 vol
+					7 = sample 3 %66 vol
+					8 = sample 1 %33 vol
+					9 = sample 2 %33 vol
+					A = sample 3 %33 vol
+					B = ???
+					C = ???
+					D = Ext
+								
+								 
+								 
+								 
+	Waveforms (default)
+	---------
+							
+						0 = square (50% duty cycle)
+						1 = square (75% duty cycle)
+						2 = sine
+						3 = saw (ramp up)
+						
+
+
+	Function details
+	----------------
+	
+
+				Portamento (b0-b3). 1 byte parameter.
+					
+							Slides pitch up or down, or from current note to new note.
+							Auto slide has 1 byte parameter. Format as follows:
+								
+								D0-4 = base value to constant add/sub of channel frequency. **
+								D5-7 = tick rate to apply above amount. Value is +1, so 0=1 and 7=8.
+								
+							Auto mode slides until new note or cut defined/encountered. 
+		
+							Slide to note has 1byte parameter. Format as follows:
+							
+								D0-5 = Note+octave to slide to.
+								D6-7 = delay in ticks between updates. Value is +1. 0=1 and 3=4.
+							
+							Pitch slide to note is done in semitones, not accumulating period deltas.
+						
+				Echo (9d-9f). 2 byte parameter
+					
+						Sets a delay effect for the shadow channels to create a multivoice echo effect.
+						Three different defines for both software channels to choose from.
+					
+							Byte1: Shadow channel 1
+								D0-4 = delay in ticks. Value +1 (1-33).
+								D5-7 = volume to subtract from main volume (range 0-15). Value * 2. 
+							 
+							Byte2: Shadow channel 2
+								D0-4 = delay in ticks. Value +1 (1-33).
+								D5-7 = volume to subtract from main volume (range 0-15). Value * 2. 
+
+
+				Vibrato (b4). 4 byte parameter
+
+							The waveform type is triangle or square, depending on the defined parameters.
+							The length of one complete cycle is byte4 * 2. A single define applys to the
+							main channels and all shadow channels. Each software channel has its own define.
+	
+								byte 1 = delay before vibrato starts (in ticks)				
+								byte 2 = vibrato speed (in ticks)
+								byte 3 = period delta
+								byte 4 = waveform height (defined in time, by ticks)
+						
+
+				Envelope (fb-fd). 3 byte parameter
+		
+							Set three different envelope defines for each of the main software channels.
+							Channel 3 has no envelope defines.
+		
+								byte 1 = start volume
+								byte 2 = delta for attack (8bit signed)
+								byte 3 = delta for decay  (8bit signed)
+						
+								format: (start volume and delta value) 
+							
+									D0-2 = float part
+									D3-7 = real/whole volume value
+
+				Envelope (95-96). 3 byte parameter
+							
+							Same as the main envelope define, but only for shadow channels. And no multiple
+							defines.
+								
+				
+				Vibrate state (97-98). No parameters
+							
+							Turns vibrato on or off for the corresponding main channel.
+
+
+				Vibrate state (99-9c). No parameters
+							
+							Turns vibrato on or off for the corresponding software channel's shadow channels.
+
+
+				Pan Volume (92). 1 byte parameter
+					
+							Sets the channels pan volume level. Also used for main channel mono volume level
+							(independent and 1 layer above the envelope volume level).
+
+								D0-3 = Right channel volume level.
+								D4-7 = Left  channel volume level.
+
+				Main volume set (c0-c7). No parameter (short mode)
+					
+							Sets the channels volume level by subtracting the original pan volume level by
+							this value. 8 functions total. C0= full volume, C7 = quietest. Together they
+							make up a range of 0 to 7. This is multipled by 2 before being subtracted from
+							the 0-15 range of each pan volume side. Yes, this is a mono set but pan volume is
+							adjusted accordingly.
+
+
+				Pan Volume (93-94). 1 byte parameter
+					
+							Sets the shadow channels pan volume level. Also used for main channel mono volume
+							level (independent and 1 layer above the envelope volume level).
+
+								D0-3 = Right channel volume level.
+								D4-7 = Left  channel volume level.
+								
+				
+				Detune (8f). 1 byte parameter
+				
+							8bit signed value to offset all notes on corresponding channel. Value is a direct
+							add/sub of the channels period value, and stacks with vibrato and portamento.
+							
+								byte 1 = signed value.
+
+
+				Detune (90-91). 1 byte parameter
+				
+							8bit signed value to offset all notes on corresponding shadow channels. Value is a
+							direct add/sub of the channels period value, and stacks with vibrato and portamento.
+							
+								byte 1 = signed value.
+
+				Decrement (b7). No parameters
+				
+							Decrements the channels pan volume by 1. Effects both main and all shadow channels
+							on the corresponding software channel. Pan volume will not slide passed 0 per side.
+
+
+				Increment (b8). No parameters
+				
+							Increments the channels pan volume by 1. Effects both main and all shadow channels
+							on the corresponding software channel. Pan volume will not slide passed 15 per side.
+
+				Main fade up (ba). 1 byte parameter
+				
+							Fades up the entire sound engine (all hardware channels) by 1 on each number of ticks
+							from the parameter byte.
+							
+								byte 1 = number of ticks(+1) in between incrementing master pan volume.
+
+
+				Main fade down (bb). 1 byte parameter
+				
+							Fades down the entire sound engine (all hardware channels) by 1 on each number of ticks
+							from the parameter byte.
+							
+								byte 1 = number of ticks(+1) in between decrementing master pan volume.
+
+
+				Main volume set (b9). 1 byte parameter
+				
+							Sets the entire sound engine (all hardware channels) to the value in the parameter.
+							
+								byte 1:
+									
+									D0-3 = Right pan master volume level.
+									D4-7 = Left pan master volume level.
+									
+				
+				Note length (a7).	1 byte parameter
+				
+							Set the whole note length. Using a 4/4 timing, BPM = 3600/tick/4. Default is 6 ticks or
+							150 BPM.
+
+
+				Note cut (ff).	No parameter
+				
+							Cuts off the corresponding main channel and shadow channel(s).
+							
+							
+				Rest (00).	No parameter
+					
+							Skips the software channel entry. If a note is playing, it'll keep playing. Same with FX.
+				
+							
+				Chord define (e0-ef). 3 byte parameter.
+							
+							Defines one of sixteen chords to play through the FX function. On software channel 1, only
+							2 note chords can play. The third note will not play. The additional notes are played on the
+							software channel's shadow channels.
+							
+								Byte 1 = first note
+								Byte 2 = second note
+								Byte 3 = third note
+								
+						Note: For playback, when FX Chord mode is selected the first 16 notes are replaced with the
+									corresponding chord defines. You usually don't need chord at that low octave anyway ;)
+									So note + (fx# = $C) = chord define playback.
+									
+									
+				Note range (01-48). 1 byte parameter.
+				
+							There are 70 total notes. C1 to A6. A note is followed by a waveform, envelope, and FX
+							parameter.
+
+
+				Note range (49-8e). No parameter
+				
+							Same as normal note range, but no additional parameter. Saves 1 byte. Reuses previous
+							parameters.
+				
+				
+				Arpeggio define (f2). 2 byte parameter
+				
+							Defines an arpeggio setup for the software channel.
+							
+								Byte 1:
+								
+									D0-3 = signed semitone offset from note
+									D4-7 = signed semitone offset from note+(D0-D3)
+									
+								Byte 2:
+									
+									D0-3 = delay in ticks between each note playback.
+									D4-7 = ???
+				
+				
+				Rest+repeat (d0-d2). No parameter.
+				
+							Same as Rest, but four hard coded values. They correspond to 2,3,4 Rests.
+
+
+				Cut+repeat (d3-d5). No parameter.
+				
+							Same as note cut, but four hard coded values. They correspond to 2,3,4 Rest+cut.
+				
+				
+				Single Channel Echo (f1). 
+				
+							This is different than normal echo in that it uses a single channel to produce an
+							echo effect. This echo effect is compatible in Additive synth mode and Chord mode,
+							of a software channel.
+							
+										
+				
+				
+				FX cut (b5). No parameter
+				
+							Stops FX for a channel and resets channel notes/periods to normal.
+
+
+				FX pause (fe). No parameter
+				
+							Pauses FX for a channel and does not change/reset channel notes/period.
+
+
+				FX resume (f0). No parameter
+				
+							Resumes FX for a channel and updates channel notes/period immediately.
+							
+							
+				FX delay (af). 1 byte parameter
+				
+							Delays a scheduled FX function byte <n+1> ticks.
+							
+								byte 1 = ticks+1
+
+
+				FX delay shadow (ce-cf). 1 byte parameter
+				
+							Delays a scheduled FX function byte <n+1> ticks for corresponding shadow channel.
+							
+								byte 1 = ticks+1
+
+
+				FX pause shadow (cc-cd). No parameter
+				
+							Pauses FX for a shadow channel and does not change/reset channel notes/period.
+
+
+				FX resume shadow (ca-cb). No parameter
+				
+							Resumes FX for a shadow channel and updates channel notes/period immediately.
+
+
+
+				Prefix (b6). No parameter
+				
+							This function adds additional bloat to an entry, which defeats the whole purpose of
+							this mini/packed song format, but in return gives you some more flexibility when needed.
+				
+							For functions:
+
+								Prefix prevents the channel from incrementing to the next position after reading
+								in channel entry data. This allows you to call multiple functions in a single 
+								instance without advancing the channel's entry pointer. Must be used each time for
+								each instance of a function call. I.e. it must be called before all functions. 
+				
+							For notes:
+
+								Same as above, but it allows you to directly write to shadow channels. For those
+								occasions when you just need direct control over a shadow channel. When the prefix
+								function is called for an entry and for a note, the internal hardware channel pointer
+								is incremented. The initial channel is main. After a note is written to the main
+								channel, the internal pointer sequentially increments to shadow channel 1, and then 
+								shadow channel 2. To 'skip' updating a channel and choose the next one in sequence,
+								use the Skip/Rest function along with the Prefix function.
+
+
+				Waveform shadow select (f3-fa). No parameter
+				
+								Manually sets the shadow channel's waveform type.
+								
+								
+				Additive synth define (c8-c9).
+				
+								Combines main and shadow channels to form a single instrument sound.
+								
+									byte 1
+										
+										D0-3 = shadow channel 1 delay before start (in ticks)
+										D4-7 = shadow channel 2 delay before start (in ticks)
+										
+									byte 2
+									
+										D0-3 = 4bit signed detune value. Shadow channel 1 (normal detune ignored)
+										D4-7 = 4bit signed detune value. Shadow channel 2 (normal detune ignored)
+									
+									byte 3
+									
+										D0-3 = shadow channel 1 delay of FX (in ticks)
+										D4-7 = shadow channel 2 delay of FX (in ticks)
+									
+									byte 4
+										
+										D0-3 = shadow channel 1 volume envelope attack rate modifier (signed delta)
+										D4-7 = shadow channel 2 volume envelope attack rate modifier (signed delta)
+
+									byte 5
+										
+										D0-3 = shadow channel 1 volume envelope decay rate modifier (signed delta)
+										D4-7 = shadow channel 2 volume envelope decay rate modifier (signed delta)
+										
+									byte 6
+									
+										D0-7 = Shadow channel 1 semitone offset relative to main note (signed value)
+
+									byte 7
+									
+										D0-7 = Shadow channel 2 semitone offset relative to main note (signed value)
+										
+									Byte 8
+										
+										D0-3 = shadow channel 1 FX rate modifier (signed, value in ticks)
+										D4-7 = shadow channel 2 FX rate modifier (signed, value in ticks)
+									
+									Byte 9
+									
+										D0 = Main channel Portamento disable (1), enable (0)
+										D1 = Shadow channel 1 Portamento disable (1), enable (0)
+										D2 = Shadow channel 2 Portamento disable (1), enable (0)
+										D3 = Main channel vibrato disable (1), enable (0)
+										D4 = Shadow channel 1 vibrato disable (1), enable (0)
+										D5 = Shadow channel 2 vibrato disable (1), enable (0)
+										D6 = Shadow channel 1 volume envelope disable (1), enable (0)
+										D7 = Shadow channel 2 volume envelope disable (1), enable (0)
+
+
+				Key release (d6). No parameters
+				
+								Instantly releases key hold. Envelope will continue on its way.
+
+
+				Key hold (d8). 1 byte parameter
+				
+								Longer form of Attribute FX entry. Holds channel volume <n> ticks into note length.
+								
+									byte 1 = <n+1> = tick counter(decremented). When expires, volume is held.
+
+
+				Key hold decay rate (d7). 1 byte parameter
+				
+								Decay rate for when volume is held by Key hold. The volume is decrement by the value
+								in the parameter once per tick.
+								
+									byte 1 
+									
+										00 = no decay
+										01-ff = fixed point volume subtract accumulator. 1bit(whole):7bit(float)
+	
+	
+				Note Attribute mode reset (d9). No parameters
+				
+								An alternate method for Attribute FX mode $f.
+	
+	
+	
+	
+	
+	
+	
+	
+				
+				

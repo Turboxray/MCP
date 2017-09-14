@@ -1,0 +1,122 @@
+[path]screenshots="screenshots\"
+[path]saved_games="states\"
+[path]cheats="cheats\"
+[video]screen_width=
+[video]screen_height=
+[video]screen_depth=
+[video]windowed=y
+[setup]show=
+[video]driver=
+[gamepad]config=
+[keyboard]config=
+[misc]language=
+
+[VIDEO INIT]
+driver... DirectX
+found 1 video adapter(s)
+  - adapter 1 has 2 device(s) and 22 video mode(s)
+select adapter... 1
+select device... 1
+build video mode list... 22 modes
+device:  v0.0.0 (HAL)
+
+[INPUT INIT]
+opening direct input DLL... OK
+init direct input... OK
+scanning gamepad device(s)...
+  - gamepad  0 : GIC USB Joystick (buttons=16, axes=4, povs=0, guid=49904160-C99E-11DE-8002444553540000)
+found 1 gamepad(s)
+
+[SOUND INIT]
+scanning sound card... found 2 sound card(s)
+checking sound card mixer ("Realtek HD Audio output" v5.10)... OK
+ +SPEAKERS:   vol =  90 [00000000/0000FFFF]
+   -WAVEOUT      [ 0] vol = 100 [00000000/0000FFFF]
+   -SYNTHESIZER  [ 1] vol = 100 [00000000/0000FFFF]
+   -LINE         [ 2] vol =  92 [00000000/0000FFFF]
+   -MICROPHONE   [ 3] vol =   0 [00000000/0000FFFF]
+   -COMPACTDISC  [ 4] vol =  85 [00000000/0000FFFF]
+wav audio volume... (0xffff) 100
+opening direct sound DLL... OK
+init direct sound... OK
+set cooperative level... OK
+create primary buffer... OK
+setup primary buffer: freq=44100 channels=2 bits=16... OK
+create thread... OK
+
+[CD-ROM INIT]
+scanning drives...
+  + drive D: TSSTcorp CDDVDW SH-S222L  (port=0, unit=1)  [CDROM]
+  + drive F: Generic DVD-ROM  (port=2, unit=0)  [CDROM]
+  + drive G: Generic DVD-ROM  (port=2, unit=1)  [CDROM]
+opening ASPI DLL... could not open the DLL!
+found 3 CD-ROM drive(s)
+
+[CDDA INIT]
+creating thread... OK
+
+[CD SCAN INIT]
+creating thread... OK
+scanning...
+  - drive D: not ready, no change
+spti[F:] scan
+spti[F:] disc mounted (tracks=52)
+  - drive F: ready, mounted
+spti[G:] scan
+spti[G:] disc mounted (tracks=1)
+  - drive G: ready, mounted
+scanning drive F: ... data CD (?)
+scanning drive G: ... data CD (?)
+wav audio volume... 93
+
+[GAMEPAD INIT]
+auto calibration: -500 500
+
+[LOAD CONFIG]
+
+[BACKUP RAM INIT]
+loading backup RAM database index file : "C:\games\pce_cd\backup.idx"... OK
+checking database... 69 bank(s) found
+
+[PSG INIT]
+allocating sound buffers(6)... OK
+allocating ADPCM sound buffer... OK
+
+[HUCARD]
+create dummy rom... OK
+initialize a new backup RAM bank
+
+[HUCARD]
+loading ROM file : "C:\pce_code\8k compo\demo1\code6\music engine 5\main.pce"... OK
+searching game backup RAM in database [d724102b|00000000]... not found
+initialize a new backup RAM bank
+wav audio volume... (0xffff)
+
+[GAMEPAD STATS]
+gamepad 0 stats:
+status: 0000
+poll errors: 8007000c 0 0 0
+poll: failed=0 success=2207
+axes (4):
+  - 0: min=0 max=119 [2207 (0 / 0)]
+  - 1: min=0 max=64 [2207 (0 / 0)]
+  - 2: min=-133 max=0 [2207 (0 / 0)]
+  - 3: min=268435456 max=-268435456 [0 (0 / 0)]
+povs (0):
+buttons (16):
+  - 0: off=2207 on=0 bitmask=00
+  - 1: off=2207 on=0 bitmask=00
+  - 2: off=2207 on=0 bitmask=00
+  - 3: off=2207 on=0 bitmask=00
+  - 4: off=2207 on=0 bitmask=00
+  - 5: off=2207 on=0 bitmask=00
+  - 6: off=2207 on=0 bitmask=00
+  - 7: off=2207 on=0 bitmask=00
+  - 8: off=2207 on=0 bitmask=00
+  - 9: off=2207 on=0 bitmask=00
+  - 10: off=2207 on=0 bitmask=00
+  - 11: off=2207 on=0 bitmask=00
+  - 12: off=2207 on=0 bitmask=00
+  - 13: off=2207 on=0 bitmask=00
+  - 14: off=2207 on=0 bitmask=00
+  - 15: off=2207 on=0 bitmask=00

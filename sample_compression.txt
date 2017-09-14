@@ -1,0 +1,110 @@
+
+
+	Waveform compression scheme
+
+
+		Control code:  Prefixes all waveform data.
+				
+						Mode:parameter
+				
+				Mode=upper 4bit, parameter = lower 4bit.
+				
+
+
+			Literal (00)
+						 direct value = lower 4bit parameter. (multiplied by 2)
+		
+			Modify mode (15)
+		
+					Sets the multiplier for Delta modes 8-14. 
+
+					 parameter = value to multiply delta by (for delta mode).
+						 						0 = 0.5 
+						 						1 = 1		
+						 						2 = 1.5	
+						 						3 = 2		
+						 						4 = 2.5	
+						 						6 = 3		
+						 						7 = 3.5	
+
+				 If parameter is greater than 7, then mode is literal block length mode
+				 with the follow parameter being the length in samples.
+						 
+						 						8 = 2
+						 						9 = 4
+						 						a = 6
+						 						b = 8
+						 						c = 10
+						 						d = 12
+						 						e = 14
+						 						f = 16
+						 						
+		
+			Extended mode (16)
+						
+						 allows another 16 modes to be defined.
+
+	For RLE and Delta mode,  the parameter is the length for a block setup.
+
+
+			RLE mode (01) 
+			
+						 length = lower 4bit parameter. Repeats last delta (not sample)
+		
+			Delta Mode (02-07). A variable length block of deltas to accumulate for direct sample output.
+		
+				      						Modes 8-14 are modes 02-07 using multiplier value. All final delta
+		                      values are multiplied by 2 before being applied to the 5bit accumulator.
+		
+				3bit (02)
+						 0
+						-1
+						+1
+						-2
+						+2
+						-3
+						+3
+						-4
+		
+				3bit (03)
+						 0
+						-1
+						+1
+						-2
+						+2
+						-3
+						+3
+						+4
+		
+		
+				2bit (04)
+						 0
+						-1
+						+1
+						-2
+				
+				2bit alt (05)
+						 0
+						-1
+						+1
+						+2
+		
+				1bit (06)
+						 0
+						-1
+		
+				1bit alt (07)
+						 0
+						+1
+						
+				
+		
+		
+
+
+
+
+
+
+
+

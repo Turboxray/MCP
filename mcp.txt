@@ -1,0 +1,52 @@
+
+
+
+
+
+
+		D4-7 = parameter(s)	
+		D0-3 = function
+					 00 = skip
+					 01 = reset WF/Env (D4-7)
+					 02 = direct volume (D4-7)
+					 03 = echo mode 1(D4-5, 6-7)
+					 04 = key hold (D4-7)
+					 05 = echo mode 2(D4-5, 6-7)
+					 06 = Arp
+					 07 = Vibrato ON
+					 08 = Vibrato OFF
+
+
+		skip:	nothing is changed or added to the note.
+		
+		volume mode:
+
+
+		01
+			Parameter D4-7
+			
+			D4-5 = env
+			D6-7 = waveform
+			
+		09 = prefix. parameter = num of functions.
+		
+		0e 
+			porta
+			D4 = porta up on
+			D5 = porta down on
+			D6 = port note on
+			D7 = take new port arg (requires additional byte)
+		
+		
+		porta to note setup: note, fx, parameter 
+		
+		or
+		
+		cmd, note, parameter
+
+
+
+
+
+
+
